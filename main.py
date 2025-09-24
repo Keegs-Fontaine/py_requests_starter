@@ -1,9 +1,6 @@
 import pandas as pd
 import sqlite3
-
-FILE_LIST = ["plot", "cond","tree","subplot", "POP_PLOT_STRATUM_ASSGN", "POP_EVAL"]
-EVALID = 101901
-STATE = "DE"
+from shared import FILE_LIST, subset_with_evalid, STATE
 
 # setup an in-memory sqlite database for querying
 with sqlite3.connect(':memory:') as conn:
@@ -11,6 +8,10 @@ with sqlite3.connect(':memory:') as conn:
         df = pd.read_csv(f"{STATE}_{file}.csv")
         df.to_sql(file, conn, index=False, if_exists='replace')
 
-    query = "SELECT * from tree where plot = 11 limit 10"
+    df = subset_with_evalid(FILE_LIST[0:4], conn)
 
-    print(pd.read_sql(query, conn))
+    # Example query to check data
+    example_query = "select * from plot"
+    print(pd.read_sql_query(example_query, conn).columns)
+
+    # You can add your own queries here to explore the data
